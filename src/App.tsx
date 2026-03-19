@@ -7,6 +7,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "motion/react";
 import { ExternalLink, Github, ArrowRight, Code2, Cpu, Sparkles, RefreshCcw, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import ThreeBackground from "./components/ThreeBackground";
+import Privacy from "./components/Privacy";
+import Terms from "./components/Terms";
 
 const INITIAL_TEMPLATES = [
   {
@@ -50,6 +52,7 @@ const INITIAL_TEMPLATES = [
 export default function App() {
   const [cards, setCards] = useState(INITIAL_TEMPLATES);
   const [isExpanded, setIsExpanded] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
   
   const handleSwipe = useCallback((id: number, direction: 'left' | 'right') => {
     setCards((prev) => {
@@ -65,7 +68,7 @@ export default function App() {
   // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (cards.length === 0 || isExpanded !== null) return;
+      if (cards.length === 0 || isExpanded !== null || currentPage !== 'home') return;
       if (e.key === "ArrowLeft") {
         handleSwipe(cards[0].id, 'left');
       } else if (e.key === "ArrowRight") {
@@ -74,87 +77,95 @@ export default function App() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cards, isExpanded, handleSwipe]);
+  }, [cards, isExpanded, currentPage, handleSwipe]);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] relative overflow-hidden text-white font-sans antialiased selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-[#0B0F19] relative overflow-hidden text-white font-sans antialiased selection:bg-cyan-500/30 flex flex-col">
       <ThreeBackground />
 
       {/* Header */}
-      <header className="relative z-10 p-12 max-w-[1800px] mx-auto flex justify-between items-start">
-        <div className="flex flex-col gap-2">
-          <div className="inline-block px-4 py-1.5 mb-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-medium tracking-wider uppercase w-max">
+      <header className="relative z-10 p-6 md:p-12 w-full max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div className="flex flex-col gap-2 cursor-pointer" onClick={() => setCurrentPage('home')}>
+          <div className="inline-block px-4 py-1.5 mb-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-medium tracking-wider uppercase w-max hover:bg-cyan-500/20 transition-colors">
             Africa’s Tech Builders Network
           </div>
           <h1 className="text-[10px] font-mono tracking-[0.4em] uppercase text-white/40">
             TVN Templates — {new Date().getFullYear()}
           </h1>
-          <h2 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-100 to-purple-200 mt-2">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-100 to-purple-200 mt-2">
             Showcase Collection
           </h2>
         </div>
 
-        <div className="flex gap-8 items-center">
+        <div className="flex gap-4 sm:gap-8 items-center w-full sm:w-auto justify-between sm:justify-end">
           <a href="https://github.com/tvnetwork/tvn-core" target="_blank" className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] hover:text-cyan-400 transition-colors">
             <Github className="w-4 h-4" />
             <span className="hidden sm:inline">Repository</span>
           </a>
-          <button className="flex items-center gap-3 glass-panel px-6 py-3 rounded-full hover:bg-white/10 hover:shadow-[0_0_15px_rgba(0,209,255,0.2)] transition-all">
+          <button className="flex items-center gap-3 glass-panel px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/10 hover:shadow-[0_0_15px_rgba(0,209,255,0.2)] transition-all">
             <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
             <span className="text-[10px] font-mono uppercase tracking-[0.2em]">System Active</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex-1 flex items-center justify-center min-h-[70vh] px-4">
-        <div className="relative w-full max-w-[500px] h-[700px] flex flex-col items-center">
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 flex flex-col">
+        {currentPage === 'home' ? (
+          <div className="flex-1 flex items-center justify-center px-4 py-12">
+            <div className="relative w-full max-w-[500px] h-[600px] sm:h-[700px] flex flex-col items-center">
 
-          {/* Deck Container */}
-          <div className="relative w-full h-full perspective-1000">
-            <AnimatePresence>
-              {cards.map((template, index) => (
-                <SwipeCard
-                  key={template.id}
-                  template={template}
-                  index={index}
-                  total={cards.length}
-                  onSwipe={(dir) => handleSwipe(template.id, dir)}
-                  isExpanded={isExpanded === template.id}
-                  onToggleExpand={() => setIsExpanded(isExpanded === template.id ? null : template.id)}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
+              {/* Deck Container */}
+              <div className="relative w-full h-full perspective-1000">
+                <AnimatePresence>
+                  {cards.map((template, index) => (
+                    <SwipeCard
+                      key={template.id}
+                      template={template}
+                      index={index}
+                      total={cards.length}
+                      onSwipe={(dir) => handleSwipe(template.id, dir)}
+                      isExpanded={isExpanded === template.id}
+                      onToggleExpand={() => setIsExpanded(isExpanded === template.id ? null : template.id)}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
 
-          {/* Micro Controls */}
-          <div className="mt-12 flex items-center gap-16">
-            <button 
-              onClick={() => handleSwipe(cards[0].id, 'left')}
-              className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-[8px] font-mono text-cyan-400/50 uppercase tracking-[0.5em]">Navigate</span>
-            <button 
-              onClick={() => handleSwipe(cards[0].id, 'right')}
-              className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              {/* Micro Controls */}
+              <div className="mt-12 flex items-center gap-16">
+                <button
+                  onClick={() => handleSwipe(cards[0].id, 'left')}
+                  className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-[8px] font-mono text-cyan-400/50 uppercase tracking-[0.5em]">Navigate</span>
+                <button
+                  onClick={() => handleSwipe(cards[0].id, 'right')}
+                  className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : currentPage === 'privacy' ? (
+          <Privacy onBack={() => setCurrentPage('home')} />
+        ) : (
+          <Terms onBack={() => setCurrentPage('home')} />
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-[1800px] mx-auto px-12 py-16 border-t border-cyan-500/10 mt-24 flex flex-col sm:flex-row justify-between items-center gap-6">
-        <div className="flex items-center gap-4 opacity-50">
+      <footer className="relative z-10 w-full max-w-[1800px] mx-auto px-6 md:px-12 py-10 md:py-16 border-t border-cyan-500/10 mt-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+        <div className="flex items-center gap-4 opacity-50 cursor-pointer hover:opacity-100 transition-opacity" onClick={() => setCurrentPage('home')}>
           <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
           <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-cyan-100">Tech Visionaries Network</span>
         </div>
-        <div className="flex gap-12 text-[10px] font-mono uppercase tracking-[0.4em] text-white/40">
-          <a href="#" className="hover:text-cyan-400 transition-colors">Privacy</a>
-          <a href="#" className="hover:text-cyan-400 transition-colors">Terms</a>
+        <div className="flex gap-8 sm:gap-12 text-[10px] font-mono uppercase tracking-[0.4em] text-white/40">
+          <button onClick={() => setCurrentPage('privacy')} className="hover:text-cyan-400 transition-colors">Privacy</button>
+          <button onClick={() => setCurrentPage('terms')} className="hover:text-cyan-400 transition-colors">Terms</button>
           <span className="text-white/20">© {new Date().getFullYear()}</span>
         </div>
       </footer>
@@ -226,7 +237,7 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
     >
       <div className="h-full flex flex-col relative">
         {/* Image Section */}
-        <div className="h-[50%] relative overflow-hidden bg-[#0B0F19]">
+        <div className="h-[45%] sm:h-[50%] relative overflow-hidden bg-[#0B0F19]">
           <motion.img 
             src={template.image} 
             alt={template.title}
@@ -250,12 +261,12 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               e.stopPropagation();
               onToggleExpand();
             }}
-            className="absolute top-6 right-6 w-10 h-10 bg-[#0B0F19]/80 border border-cyan-500/30 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-cyan-500/20 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
+            className="absolute top-6 right-6 w-10 h-10 bg-[#0B0F19]/80 border border-cyan-500/30 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-cyan-500/20 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500 z-20"
           >
             <Info className="w-4 h-4 text-cyan-400" />
           </button>
           
-          <div className="absolute bottom-6 left-8 flex items-center gap-4">
+          <div className="absolute bottom-6 left-6 sm:left-8 flex items-center gap-4">
             <div className="flex flex-col">
               <span className="text-[8px] font-mono text-cyan-400/60 uppercase tracking-[0.4em]">Status</span>
               <span className="text-[10px] font-mono text-cyan-100 uppercase tracking-widest flex items-center gap-1">
@@ -266,28 +277,28 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
         </div>
 
         {/* Content Section */}
-        <div className="p-10 flex-1 flex flex-col relative overflow-hidden">
+        <div className="p-6 sm:p-10 flex-1 flex flex-col relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-[9px] font-mono text-cyan-400/60 uppercase tracking-[0.5em] bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
+          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <span className="text-[8px] sm:text-[9px] font-mono text-cyan-400/60 uppercase tracking-[0.5em] bg-cyan-500/10 px-2 sm:px-3 py-1 rounded-full border border-cyan-500/20">
               PKG {String(template.id).padStart(2, '0')}
             </span>
             <span className="w-1 h-1 bg-cyan-500/50 rounded-full" />
-            <span className="text-[9px] font-mono text-purple-400/80 uppercase tracking-[0.5em]">{template.tech[0]}</span>
+            <span className="text-[8px] sm:text-[9px] font-mono text-purple-400/80 uppercase tracking-[0.5em] truncate">{template.tech[0]}</span>
           </div>
 
-          <h3 className="text-3xl font-bold tracking-tight mb-4 text-white group-hover/card:text-cyan-300 transition-colors">{template.title}</h3>
-          <p className="text-gray-400 text-sm leading-relaxed mb-8 flex-1 font-light tracking-wide">
+          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-4 text-white group-hover/card:text-cyan-300 transition-colors line-clamp-1">{template.title}</h3>
+          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8 flex-1 font-light tracking-wide line-clamp-3">
             {template.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mt-auto">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto">
             <a 
               href={template.liveUrl} 
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              className="group flex items-center justify-center gap-2 py-4 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono uppercase tracking-[0.3em] rounded-xl hover:bg-cyan-500 hover:text-[#0B0F19] hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all"
+              className="group flex items-center justify-center gap-2 py-3 sm:py-4 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-xl hover:bg-cyan-500 hover:text-[#0B0F19] hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all"
             >
               Preview <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </a>
@@ -295,7 +306,7 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               href={template.codeUrl} 
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center gap-2 py-4 bg-[#0B0F19] border border-white/10 text-[10px] font-mono text-white/70 uppercase tracking-[0.3em] rounded-xl hover:bg-white/10 hover:text-white transition-all"
+              className="flex items-center justify-center gap-2 py-3 sm:py-4 bg-[#0B0F19] border border-white/10 text-[9px] sm:text-[10px] font-mono text-white/70 uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-xl hover:bg-white/10 hover:text-white transition-all"
             >
               <Code2 className="w-3 h-3" /> Code
             </a>
@@ -309,36 +320,36 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="absolute inset-0 bg-[#0B0F19]/95 backdrop-blur-xl z-20 flex flex-col p-10 border border-cyan-500/30 rounded-[2.5rem]"
+              className="absolute inset-0 bg-[#0B0F19]/95 backdrop-blur-xl z-30 flex flex-col p-6 sm:p-10 border border-cyan-500/30 rounded-[2.5rem]"
             >
-              <div className="flex justify-between items-center mb-10">
+              <div className="flex justify-between items-center mb-8 sm:mb-10">
                 <div className="flex items-center gap-3">
                   <Cpu className="w-5 h-5 text-cyan-400" />
-                  <span className="text-[10px] font-mono text-cyan-300 uppercase tracking-[0.6em]">System Manifest</span>
+                  <span className="text-[9px] sm:text-[10px] font-mono text-cyan-300 uppercase tracking-[0.4em] sm:tracking-[0.6em]">System Manifest</span>
                 </div>
                 <button onClick={onToggleExpand} className="w-10 h-10 rounded-full border border-cyan-500/30 bg-cyan-500/10 flex items-center justify-center hover:bg-cyan-500/20 hover:text-cyan-300 transition-all">
                   <RefreshCcw className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-4">
-                <section className="bg-[#111827] p-6 rounded-2xl border border-white/5">
-                  <label className="text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-4 block flex items-center gap-2">
+              <div className="space-y-6 sm:space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-2 sm:pr-4">
+                <section className="bg-[#111827] p-4 sm:p-6 rounded-2xl border border-white/5">
+                  <label className="text-[8px] sm:text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-3 sm:mb-4 block flex items-center gap-2">
                     <span className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse" /> Description
                   </label>
-                  <p className="text-sm text-gray-300 leading-relaxed font-light">
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">
                     {template.description}
                   </p>
                 </section>
 
                 <section>
-                  <label className="text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-4 block flex items-center gap-2">
+                  <label className="text-[8px] sm:text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-3 sm:mb-4 block flex items-center gap-2">
                     <span className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse" /> Tech Stack
                   </label>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {template.tech.map((f, i) => (
-                      <div key={f} className="flex items-center justify-between py-3 border-b border-white/5 group hover:border-cyan-500/30 transition-colors">
-                        <span className="text-[12px] font-mono text-gray-400 uppercase tracking-widest group-hover:text-cyan-300 transition-colors">
+                      <div key={f} className="flex items-center justify-between py-2 sm:py-3 border-b border-white/5 group hover:border-cyan-500/30 transition-colors">
+                        <span className="text-[10px] sm:text-[12px] font-mono text-gray-400 uppercase tracking-widest group-hover:text-cyan-300 transition-colors">
                           <span className="text-cyan-500/50 mr-2">{String(i + 1).padStart(2, '0')}</span> {f}
                         </span>
                         <Sparkles className="w-3 h-3 text-cyan-500/30 group-hover:text-cyan-400 transition-colors" />
@@ -351,7 +362,7 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               <a 
                 href={template.liveUrl}
                 target="_blank"
-                className="mt-6 w-full py-5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-mono text-[10px] uppercase tracking-[0.5em] rounded-xl text-center hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all font-bold flex items-center justify-center gap-2 group"
+                className="mt-6 w-full py-4 sm:py-5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.5em] rounded-xl text-center hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all font-bold flex items-center justify-center gap-2 group"
               >
                 Initialize <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </a>
