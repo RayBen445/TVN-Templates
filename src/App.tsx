@@ -3,36 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "motion/react";
 import { ExternalLink, Github, ArrowRight, Code2, Cpu, Sparkles, RefreshCcw, Info, ChevronLeft, ChevronRight } from "lucide-react";
+import ThreeBackground from "./components/ThreeBackground";
+import Privacy from "./components/Privacy";
+import Terms from "./components/Terms";
 
 const INITIAL_TEMPLATES = [
   {
     id: 1,
-    title: "Aura Dashboard",
-    description: "A study in fluid data visualization. High-precision analytics for the next generation of digital architects.",
-    tech: ["React", "D3.js", "TypeScript"],
-    image: "https://picsum.photos/seed/aura/1200/800",
+    title: "Creator Dashboard",
+    description: "A modern, responsive dashboard template for content creators, authors, and digital product storefronts.",
+    tech: ["React", "TypeScript", "Tailwind"],
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2426",
     liveUrl: "https://tvn-core.vercel.app/",
-    codeUrl: "https://github.com/tvnetwork/tvn-core"
+    codeUrl: "https://github.com/tvnetwork/tvn-core/tree/main/templates/creator-dashboard-template"
   },
   {
     id: 2,
-    title: "Ethereal Landing",
-    description: "Minimalist editorial architecture. Designed for high-end luxury brands and cultural institutions.",
-    tech: ["Next.js", "Framer", "Tailwind"],
-    image: "https://picsum.photos/seed/ethereal/1200/800",
-    liveUrl: "https://tvn-core.vercel.app/",
+    title: "E-Commerce Starter",
+    description: "High-conversion premium retail experience. Seamless transactions wrapped in a sophisticated dark aesthetic.",
+    tech: ["Next.js", "Stripe", "Tailwind"],
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=2370",
+    liveUrl: "https://tvnetwork.zone.id",
     codeUrl: "https://github.com/tvnetwork/tvn-core"
   },
   {
     id: 3,
-    title: "Prism Interface",
-    description: "Advanced glass-morphism chat system. Real-time neural processing with refined typography.",
-    tech: ["React", "Lucide", "Node.js"],
-    image: "https://picsum.photos/seed/prism/1200/800",
-    liveUrl: "https://tvn-core.vercel.app/",
+    title: "AI SaaS Boilerplate",
+    description: "Advanced glass-morphism dashboard system. Real-time neural processing with refined typography.",
+    tech: ["React", "Node.js", "PostgreSQL"],
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2370",
+    liveUrl: "https://tvnetwork.zone.id",
     codeUrl: "https://github.com/tvnetwork/tvn-core"
   },
   {
@@ -40,17 +43,8 @@ const INITIAL_TEMPLATES = [
     title: "Zenith Portfolio",
     description: "The ultimate showcase for creative visionaries. Fluid transitions and immersive project galleries.",
     tech: ["React", "Motion", "Three.js"],
-    image: "https://picsum.photos/seed/zenith/1200/800",
-    liveUrl: "https://tvn-core.vercel.app/",
-    codeUrl: "https://github.com/tvnetwork/tvn-core"
-  },
-  {
-    id: 5,
-    title: "Onyx Commerce",
-    description: "Premium retail experience. Seamless transactions wrapped in a sophisticated dark aesthetic.",
-    tech: ["React", "Stripe", "Tailwind"],
-    image: "https://picsum.photos/seed/onyx/1200/800",
-    liveUrl: "https://tvn-core.vercel.app/",
+    image: "https://images.unsplash.com/photo-1507238692062-56890a501512?auto=format&fit=crop&q=80&w=2370",
+    liveUrl: "https://tvnetwork.zone.id",
     codeUrl: "https://github.com/tvnetwork/tvn-core"
   }
 ];
@@ -58,6 +52,7 @@ const INITIAL_TEMPLATES = [
 export default function App() {
   const [cards, setCards] = useState(INITIAL_TEMPLATES);
   const [isExpanded, setIsExpanded] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
   
   const handleSwipe = useCallback((id: number, direction: 'left' | 'right') => {
     setCards((prev) => {
@@ -73,7 +68,7 @@ export default function App() {
   // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (cards.length === 0 || isExpanded !== null) return;
+      if (cards.length === 0 || isExpanded !== null || currentPage !== 'home') return;
       if (e.key === "ArrowLeft") {
         handleSwipe(cards[0].id, 'left');
       } else if (e.key === "ArrowRight") {
@@ -82,128 +77,96 @@ export default function App() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cards, isExpanded, handleSwipe]);
+  }, [cards, isExpanded, currentPage, handleSwipe]);
 
   return (
-    <div className="min-h-screen bg-luxury-black relative overflow-hidden text-white font-sans antialiased selection:bg-white/10">
-      {/* 2030 Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-white/[0.01] blur-[160px] rounded-full" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] bg-white/[0.01] blur-[160px] rounded-full" />
-      </div>
-      <div className="absolute inset-0 bg-grid-luxury opacity-20 pointer-events-none" />
+    <div className="min-h-screen bg-[#0B0F19] relative overflow-hidden text-white font-sans antialiased selection:bg-cyan-500/30 flex flex-col">
+      <ThreeBackground />
 
-      {/* Navigation */}
-      <nav className="relative z-50 max-w-[1800px] mx-auto px-12 py-16 flex justify-between items-center">
-        <div className="flex items-center gap-6 group cursor-pointer">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 border border-white/20 rounded-full group-hover:rotate-180 transition-transform duration-1000" />
-            <div className="w-2 h-2 bg-white rounded-full" />
+      {/* Header */}
+      <header className="relative z-10 p-6 md:p-12 w-full max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div className="flex flex-col gap-2 cursor-pointer" onClick={() => setCurrentPage('home')}>
+          <div className="inline-block px-4 py-1.5 mb-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-medium tracking-wider uppercase w-max hover:bg-cyan-500/20 transition-colors">
+            Africa’s Tech Builders Network
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif italic text-2xl tracking-tight leading-none">Studio Core</span>
-            <span className="text-[8px] font-mono tracking-[0.4em] text-white/30 uppercase mt-1">Advanced Systems</span>
-          </div>
-        </div>
-        
-        <div className="hidden lg:flex items-center gap-24 text-[9px] font-mono uppercase tracking-[0.5em] text-white/20">
-          <a href="#" className="hover:text-white transition-all hover:tracking-[0.6em]">Collection</a>
-          <a href="https://tvnetwork.zone.id" className="hover:text-white transition-all hover:tracking-[0.6em]">Network</a>
-          <a href="#" className="hover:text-white transition-all hover:tracking-[0.6em]">Archive</a>
+          <h1 className="text-[10px] font-mono tracking-[0.4em] uppercase text-white/40">
+            TVN Templates — {new Date().getFullYear()}
+          </h1>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-100 to-purple-200 mt-2">
+            Showcase Collection
+          </h2>
         </div>
 
-        <a 
-          href="https://tvnetwork.zone.id" 
-          target="_blank" 
-          className="group relative px-10 py-4 overflow-hidden rounded-full border border-white/10"
-        >
-          <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-          <span className="relative z-10 text-[9px] font-mono uppercase tracking-[0.4em] group-hover:text-black transition-colors">Connect</span>
-        </a>
-      </nav>
+        <div className="flex gap-4 sm:gap-8 items-center w-full sm:w-auto justify-between sm:justify-end">
+          <a href="https://github.com/tvnetwork/tvn-core" target="_blank" className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] hover:text-cyan-400 transition-colors">
+            <Github className="w-4 h-4" />
+            <span className="hidden sm:inline">Repository</span>
+          </a>
+          <button className="flex items-center gap-3 glass-panel px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/10 hover:shadow-[0_0_15px_rgba(0,209,255,0.2)] transition-all">
+            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em]">System Active</span>
+          </button>
+        </div>
+      </header>
 
-      <main className="relative z-10 max-w-[1800px] mx-auto px-12 grid lg:grid-cols-[1fr_480px] gap-24 items-center min-h-[calc(100vh-200px)]">
-        {/* Hero Content */}
-        <div className="max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="flex items-center gap-4 mb-12">
-              <span className="w-12 h-[1px] bg-white/20" />
-              <span className="text-[9px] font-mono text-white/40 uppercase tracking-[0.6em]">2030 Curated Series</span>
-            </div>
-            
-            <h1 className="text-[12vw] lg:text-[10vw] font-serif font-light leading-[0.85] tracking-[-0.05em] mb-16">
-              The <br />
-              <span className="italic text-luxury-gradient">New Standard</span>
-            </h1>
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 flex flex-col">
+        {currentPage === 'home' ? (
+          <div className="flex-1 flex items-center justify-center px-4 py-12">
+            <div className="relative w-full max-w-[500px] h-[600px] sm:h-[700px] flex flex-col items-center">
 
-            <div className="grid grid-cols-2 gap-12 max-w-xl">
-              <div className="space-y-4">
-                <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.4em]">Philosophy</span>
-                <p className="text-sm text-white/40 leading-relaxed font-light">
-                  Redefining digital luxury through technical precision and minimalist architecture.
-                </p>
+              {/* Deck Container */}
+              <div className="relative w-full h-full perspective-1000">
+                <AnimatePresence>
+                  {cards.map((template, index) => (
+                    <SwipeCard
+                      key={template.id}
+                      template={template}
+                      index={index}
+                      total={cards.length}
+                      onSwipe={(dir) => handleSwipe(template.id, dir)}
+                      isExpanded={isExpanded === template.id}
+                      onToggleExpand={() => setIsExpanded(isExpanded === template.id ? null : template.id)}
+                    />
+                  ))}
+                </AnimatePresence>
               </div>
-              <div className="space-y-4">
-                <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.4em]">Interaction</span>
-                <p className="text-sm text-white/40 leading-relaxed font-light">
-                  A fluid exploration of motion and depth. Swipe to navigate the future.
-                </p>
+
+              {/* Micro Controls */}
+              <div className="mt-12 flex items-center gap-16">
+                <button
+                  onClick={() => handleSwipe(cards[0].id, 'left')}
+                  className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-[8px] font-mono text-cyan-400/50 uppercase tracking-[0.5em]">Navigate</span>
+                <button
+                  onClick={() => handleSwipe(cards[0].id, 'right')}
+                  className="w-12 h-12 rounded-full border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-500/20 hover:text-white hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
-          </motion.div>
-        </div>
-
-        {/* Swipe Stack Section */}
-        <div className="relative flex flex-col items-center">
-          <div className="relative w-full h-[640px] flex items-center justify-center">
-            <AnimatePresence mode="popLayout">
-              {cards.map((template, index) => (
-                <SwipeCard 
-                  key={template.id}
-                  template={template}
-                  index={index}
-                  total={cards.length}
-                  onSwipe={(dir) => handleSwipe(template.id, dir)}
-                  isExpanded={isExpanded === template.id}
-                  onToggleExpand={() => setIsExpanded(isExpanded === template.id ? null : template.id)}
-                />
-              ))}
-            </AnimatePresence>
           </div>
-
-          {/* Micro Controls */}
-          <div className="mt-12 flex items-center gap-16">
-            <button 
-              onClick={() => handleSwipe(cards[0].id, 'left')}
-              className="w-12 h-12 rounded-full border border-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.5em]">Navigate</span>
-            <button 
-              onClick={() => handleSwipe(cards[0].id, 'right')}
-              className="w-12 h-12 rounded-full border border-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        ) : currentPage === 'privacy' ? (
+          <Privacy onBack={() => setCurrentPage('home')} />
+        ) : (
+          <Terms onBack={() => setCurrentPage('home')} />
+        )}
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-[1800px] mx-auto px-12 py-16 border-t border-white/5 mt-24 flex justify-between items-center">
-        <div className="flex items-center gap-4 opacity-20">
-          <div className="w-1 h-1 bg-white rounded-full" />
-          <span className="text-[8px] font-mono tracking-[0.5em] uppercase">Tech Visionaries Network</span>
+      <footer className="relative z-10 w-full max-w-[1800px] mx-auto px-6 md:px-12 py-10 md:py-16 border-t border-cyan-500/10 mt-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+        <div className="flex items-center gap-4 opacity-50 cursor-pointer hover:opacity-100 transition-opacity" onClick={() => setCurrentPage('home')}>
+          <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full" />
+          <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-cyan-100">Tech Visionaries Network</span>
         </div>
-        <div className="flex gap-12 text-[8px] font-mono uppercase tracking-[0.4em] text-white/20">
-          <a href="#" className="hover:text-white transition-colors">Privacy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms</a>
-          <span className="text-white/5">© 2030</span>
+        <div className="flex gap-8 sm:gap-12 text-[10px] font-mono uppercase tracking-[0.4em] text-white/40">
+          <button onClick={() => setCurrentPage('privacy')} className="hover:text-cyan-400 transition-colors">Privacy</button>
+          <button onClick={() => setCurrentPage('terms')} className="hover:text-cyan-400 transition-colors">Terms</button>
+          <span className="text-white/20">© {new Date().getFullYear()}</span>
         </div>
       </footer>
     </div>
@@ -268,28 +231,29 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
           ease: [0.32, 0, 0.67, 0]
         }
       }}
-      className={`absolute w-full h-full bg-luxury-gray border border-white/5 rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] cursor-grab active:cursor-grabbing group/card
-        ${isTop ? 'ring-1 ring-white/10' : ''}
+      className={`absolute w-full h-full bg-[#111827] border border-cyan-500/20 rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,209,255,0.1)] cursor-grab active:cursor-grabbing group/card
+        ${isTop ? 'ring-1 ring-cyan-500/30 shadow-[0_0_30px_rgba(0,209,255,0.1)]' : ''}
       `}
     >
       <div className="h-full flex flex-col relative">
         {/* Image Section */}
-        <div className="h-[55%] relative overflow-hidden">
+        <div className="h-[45%] sm:h-[50%] relative overflow-hidden bg-[#0B0F19]">
           <motion.img 
             src={template.image} 
             alt={template.title}
-            className="w-full h-full object-cover grayscale opacity-40 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-1000"
+            className="w-full h-full object-cover opacity-60 group-hover/card:opacity-100 transition-all duration-1000 mix-blend-luminosity group-hover/card:mix-blend-normal"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-luxury-gray via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-cyan-500/5 mix-blend-overlay pointer-events-none" />
           
-          {/* 2030 Scanning Line */}
+          {/* Scanning Line */}
           <motion.div 
             animate={{ top: ["0%", "100%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 h-[1px] bg-white/10 z-10 pointer-events-none"
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            className="absolute left-0 right-0 h-[2px] bg-cyan-500/30 shadow-[0_0_10px_rgba(0,209,255,0.5)] z-10 pointer-events-none"
           />
 
           <button 
@@ -297,53 +261,54 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               e.stopPropagation();
               onToggleExpand();
             }}
-            className="absolute top-8 right-8 w-10 h-10 glass-panel rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
+            className="absolute top-6 right-6 w-10 h-10 bg-[#0B0F19]/80 border border-cyan-500/30 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-cyan-500/20 hover:text-cyan-300 hover:shadow-[0_0_15px_rgba(0,209,255,0.3)] transition-all duration-500 z-20"
           >
-            <Info className="w-4 h-4 opacity-40" />
+            <Info className="w-4 h-4 text-cyan-400" />
           </button>
           
-          <div className="absolute bottom-6 left-8 flex items-center gap-4">
+          <div className="absolute bottom-6 left-6 sm:left-8 flex items-center gap-4">
             <div className="flex flex-col">
-              <span className="text-[6px] font-mono text-white/20 uppercase tracking-[0.4em]">Resolution</span>
-              <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">4K — HDR</span>
-            </div>
-            <div className="w-[1px] h-4 bg-white/10" />
-            <div className="flex flex-col">
-              <span className="text-[6px] font-mono text-white/20 uppercase tracking-[0.4em]">Bitrate</span>
-              <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">120 MBPS</span>
+              <span className="text-[8px] font-mono text-cyan-400/60 uppercase tracking-[0.4em]">Status</span>
+              <span className="text-[10px] font-mono text-cyan-100 uppercase tracking-widest flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block" /> Ready
+              </span>
             </div>
           </div>
         </div>
 
         {/* Content Section */}
-        <div className="p-10 flex-1 flex flex-col">
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-[7px] font-mono text-white/20 uppercase tracking-[0.5em]">Project {String(template.id).padStart(2, '0')}</span>
-            <span className="w-1 h-1 bg-white/10 rounded-full" />
-            <span className="text-[7px] font-mono text-white/20 uppercase tracking-[0.5em]">{template.tech[0]}</span>
+        <div className="p-6 sm:p-10 flex-1 flex flex-col relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+
+          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <span className="text-[8px] sm:text-[9px] font-mono text-cyan-400/60 uppercase tracking-[0.5em] bg-cyan-500/10 px-2 sm:px-3 py-1 rounded-full border border-cyan-500/20">
+              PKG {String(template.id).padStart(2, '0')}
+            </span>
+            <span className="w-1 h-1 bg-cyan-500/50 rounded-full" />
+            <span className="text-[8px] sm:text-[9px] font-mono text-purple-400/80 uppercase tracking-[0.5em] truncate">{template.tech[0]}</span>
           </div>
 
-          <h3 className="text-3xl font-serif italic mb-4 tracking-tight leading-none">{template.title}</h3>
-          <p className="text-white/30 text-xs leading-relaxed mb-8 flex-1 font-light tracking-wide">
+          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 sm:mb-4 text-white group-hover/card:text-cyan-300 transition-colors line-clamp-1">{template.title}</h3>
+          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8 flex-1 font-light tracking-wide line-clamp-3">
             {template.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto">
             <a 
               href={template.liveUrl} 
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center py-4 bg-white text-black text-[8px] font-mono uppercase tracking-[0.4em] rounded-full hover:scale-105 transition-all"
+              className="group flex items-center justify-center gap-2 py-3 sm:py-4 bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-xl hover:bg-cyan-500 hover:text-[#0B0F19] hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all"
             >
-              Launch
+              Preview <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </a>
             <a 
               href={template.codeUrl} 
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center py-4 border border-white/5 text-[8px] font-mono uppercase tracking-[0.4em] rounded-full hover:bg-white/5 transition-all"
+              className="flex items-center justify-center gap-2 py-3 sm:py-4 bg-[#0B0F19] border border-white/10 text-[9px] sm:text-[10px] font-mono text-white/70 uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-xl hover:bg-white/10 hover:text-white transition-all"
             >
-              Source
+              <Code2 className="w-3 h-3" /> Code
             </a>
           </div>
         </div>
@@ -355,30 +320,39 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="absolute inset-0 bg-luxury-black/95 z-20 flex flex-col p-12"
+              className="absolute inset-0 bg-[#0B0F19]/95 backdrop-blur-xl z-30 flex flex-col p-6 sm:p-10 border border-cyan-500/30 rounded-[2.5rem]"
             >
-              <div className="flex justify-between items-center mb-12">
-                <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.6em]">Technical Spec</span>
-                <button onClick={onToggleExpand} className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center">
-                  <RefreshCcw className="w-3 h-3 opacity-40" />
+              <div className="flex justify-between items-center mb-8 sm:mb-10">
+                <div className="flex items-center gap-3">
+                  <Cpu className="w-5 h-5 text-cyan-400" />
+                  <span className="text-[9px] sm:text-[10px] font-mono text-cyan-300 uppercase tracking-[0.4em] sm:tracking-[0.6em]">System Manifest</span>
+                </div>
+                <button onClick={onToggleExpand} className="w-10 h-10 rounded-full border border-cyan-500/30 bg-cyan-500/10 flex items-center justify-center hover:bg-cyan-500/20 hover:text-cyan-300 transition-all">
+                  <RefreshCcw className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="space-y-10 flex-1 overflow-y-auto custom-scrollbar pr-4">
-                <section>
-                  <label className="text-[7px] font-mono text-white/20 uppercase tracking-[0.5em] mb-4 block">Manifesto</label>
-                  <p className="text-lg font-serif italic text-white/60 leading-tight">
-                    "Technical excellence meeting aesthetic purity. A blueprint for the 2030 digital landscape."
+              <div className="space-y-6 sm:space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-2 sm:pr-4">
+                <section className="bg-[#111827] p-4 sm:p-6 rounded-2xl border border-white/5">
+                  <label className="text-[8px] sm:text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-3 sm:mb-4 block flex items-center gap-2">
+                    <span className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse" /> Description
+                  </label>
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-light">
+                    {template.description}
                   </p>
                 </section>
 
                 <section>
-                  <label className="text-[7px] font-mono text-white/20 uppercase tracking-[0.5em] mb-4 block">Architecture</label>
-                  <div className="space-y-3">
-                    {['Neural Processing', 'Fluid Dynamics', 'Type Precision'].map(f => (
-                      <div key={f} className="flex items-center justify-between py-3 border-b border-white/5">
-                        <span className="text-[10px] font-light text-white/40 uppercase tracking-widest">{f}</span>
-                        <Sparkles className="w-3 h-3 text-white/10" />
+                  <label className="text-[8px] sm:text-[9px] font-mono text-cyan-500 uppercase tracking-[0.5em] mb-3 sm:mb-4 block flex items-center gap-2">
+                    <span className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse" /> Tech Stack
+                  </label>
+                  <div className="space-y-2 sm:space-y-3">
+                    {template.tech.map((f, i) => (
+                      <div key={f} className="flex items-center justify-between py-2 sm:py-3 border-b border-white/5 group hover:border-cyan-500/30 transition-colors">
+                        <span className="text-[10px] sm:text-[12px] font-mono text-gray-400 uppercase tracking-widest group-hover:text-cyan-300 transition-colors">
+                          <span className="text-cyan-500/50 mr-2">{String(i + 1).padStart(2, '0')}</span> {f}
+                        </span>
+                        <Sparkles className="w-3 h-3 text-cyan-500/30 group-hover:text-cyan-400 transition-colors" />
                       </div>
                     ))}
                   </div>
@@ -388,9 +362,9 @@ function SwipeCard({ template, index, total, onSwipe, isExpanded, onToggleExpand
               <a 
                 href={template.liveUrl}
                 target="_blank"
-                className="mt-8 w-full py-5 bg-white text-black font-mono text-[8px] uppercase tracking-[0.5em] rounded-full text-center"
+                className="mt-6 w-full py-4 sm:py-5 bg-gradient-to-r from-cyan-600 to-purple-600 text-white font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.5em] rounded-xl text-center hover:shadow-[0_0_20px_rgba(0,209,255,0.4)] transition-all font-bold flex items-center justify-center gap-2 group"
               >
-                Enter Experience
+                Initialize <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </a>
             </motion.div>
           )}
